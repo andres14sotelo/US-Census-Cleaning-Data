@@ -1,0 +1,68 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import codecademylib3_seaborn
+import glob
+
+states0 = pd.read_csv('states0.csv')
+print(states0.head())
+
+# Merge all the datasets into one dataframe
+files = glob.glob('states*.csv')
+us_census_list = []
+for filename in files:
+  data = pd.read_csv(filename)
+  us_census_list.append(data)
+  
+us_census = pd.concat(us_census_list)
+
+# Convert "Income" attribute to numeric
+us_census["Income"] = pd.to_numeric(us_census['Income'].str[1:])
+
+# Split up "GenderPop" into "Men" and "Women" and then make it numeric
+GenderPop = us_census["GenderPop"].str.split("_")
+us_census['Men'] = GenderPop.str.get(0)
+us_census['Women'] = GenderPop.str.get(1)
+us_census['Men'] = pd.to_numeric(us_census['Men'].str.replace('M',""))
+us_census['Women'] = pd.to_numeric(us_census['Women'].str.replace('F',""))
+us_census = us_census.drop('GenderPop', axis = 1)
+
+plt.scatter(us_census['Women'], us_census['Income'])
+plt.show()
+
+# Fill in missing values for "Women"
+us_census = us_census.fillna({'Women': us_census.TotalPop - us_census.Men})
+
+# Drop duplicates
+print(us_census.duplicated())
+us_census = us_census.drop_duplicates()
+
+plt.scatter(us_census['Women'], us_census['Income'])
+plt.show()
+
+# Clean the race columns
+us_census[["Hispanic","White","Black","Native","Asian","Pacific"]] = us_census[["Hispanic","White","Black","Native","Asian","Pacific"]].apply(lambda se: pd.to_numeric(se.str.replace("\%","")))
+us_census['Pacific'] = us_census.fillna({'Pacific': us_census.Pacific.mean()})
+us_census = us_census.drop('Unnamed: 0', axis = 1)
+print(us_census)
+
+# Histograms for each race
+plt.subplot(3,2,1)
+plt.hist(us_census.Hispanic)
+plt.title("Hispanic")
+plt.subplot(3,2,2)
+plt.hist(us_census.White)
+plt.title("White")
+plt.subplot(3,2,3)
+plt.hist(us_census.Black)
+plt.title("Black")
+plt.subplot(3,2,4)
+plt.hist(us_census.Native)
+plt.title("Native")
+plt.subplot(3,2,5)
+plt.hist(us_census.Asian)
+plt.title("Asian")
+plt.subplot(3,2,6)
+plt.hist(us_census.Pacific)
+plt.title("Pacific")
+plt.show()
