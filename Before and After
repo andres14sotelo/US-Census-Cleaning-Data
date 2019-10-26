@@ -18,4 +18,5 @@ This is now the dataset after it was cleaned and put together.
 4	New Hampshire	1324201	  3.32191780821918	  91.31917808219185	 1.2277397260273974	 0.14280821917808229 2.19143835616438184	0.016095890410958904  68728.85958904111	  653484	 670717.0
 
 There are some more things that I could do to make the data look prettier. For instance, I can round the percentage of each 
-race to 2 decimals, etc...
+race to 2 decimals, etc... And for some reason, the data looks like its all over the place and I can't seem to fix to make it
+more legible, sorry about that. 
